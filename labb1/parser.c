@@ -14,15 +14,16 @@
 /**********************************************************************/
 #include "keytoktab.h" 
 #include "lexer.h"
-/* #include "symtab.h"      */       /* when the symtab    is added   */
+#include "symtab.h"
 /* #include "optab.h"       */       /* when the optab     is added   */
 
 /**********************************************************************/
 /* OBJECT ATTRIBUTES FOR THIS OBJECT (C MODULE)                       */
 /**********************************************************************/
-#define DEBUG 1
+#define DEBUG 0
 static int  lookahead=0;
 static int  is_parse_ok=1;
+static toktyp curr_type=0;
 
 static void prog();
 static void program_header();
@@ -43,21 +44,13 @@ static void operand();
 
 
 
-/**********************************************************************/
-/* Simulate the token stream for a given program                      */
-/**********************************************************************/
 /*
 program xyz(input, output);
 var A,B,c: integer;
 begin
 A := B + C * 2
 end.
-
 */
-
-/**********************************************************************/
-/*  Simulate the lexer -- get the next token from the buffer          */
-/**********************************************************************/
 
 
 /**********************************************************************/
@@ -82,8 +75,6 @@ static void match(int t)
     if (lookahead == t) lookahead = get_token();
     else {
         is_parse_ok=0;
-        printf("\n *** Unexpected Token: expected: %s found: %s (in match)",
-                  tok2lex(t), tok2lex(lookahead));
     }
 }
 
@@ -93,8 +84,8 @@ static void match(int t)
 
 static void program_header()
 {
-    in("program_header");
     match(program);
+    addp_name(get_lexeme()); 
     match(id);
     match('('); 
     match(input);
@@ -102,77 +93,77 @@ static void program_header()
     match(output); 
     match(')'); 
     match(';');
-    out("program_header");
 }
 
 //VAR PART ########################################
 static void type(){
-    in("type");
     if(lookahead == integer){
+        curr_type = integer;
         match(integer);
     }
     else if(lookahead == real){
+        curr_type = real;
         match(real);
     }
     else if(lookahead == boolean){
+        curr_type = boolean;
         match(boolean);
     }
-    out("type");
 }
 
 static void id_list(){
-    in("id_list");
+    //get var name from lexer
+    addv_name(get_lexeme());
     match(id);
     while(lookahead == ','){
         match(',');
+        addv_name(get_lexeme()); 
         match(id);
     }
-    out("id_list");
 }
 
 static void var_dec(){
-    in("var_dec");
     id_list();
     match(':');
     type();
+
+    setv_type(curr_type);   
+    
     match(';');
-    out("var_dec");
 }
 
 static void var_dec_list(){
-    in("var_dec_list");
     var_dec();
     while(lookahead == id){
         var_dec();
     }
-    out("var_dec_list");
 }
 
 static void var_part(){
-    in("var_part");
     if(lookahead == var){
         match(var);
         var_dec_list();
     }
-    out("var_part");
 }
 
 // STAT PART ########################################
 
 static void operand(){
-    in("opreand");
     if(lookahead == id){
+        char *id_name = get_lexeme();
+        if (!find_name(id_name)) {
+            printf("\n*** Error: Undefined variable: %s", id_name);
+            is_parse_ok = 0;
+        }
         match(id);
     }
     else if(lookahead == number){
         match(number);
     }
-    out("opreand");
 }
 
 static void factor(){
     //(expr | opreand)
-    in("factor");
     if(lookahead == '('){
         match('(');
         expr();
@@ -182,71 +173,61 @@ static void factor(){
     else{
         operand();
     }
-    out("factor");
 }
 
 static void term(){
-    in("expr");
     factor();
     while(lookahead == '*'){
         match('*');
         factor();
     }
-    out("expr");
 }
 
 static void expr(){
-    in("expr");
     term();
     while(lookahead == '+'){
         match('+');
         term();
     }
-    out("expr");
 }
 
 static void assign_stat(){
-    in("assign_stat");
+    char *var_name = get_lexeme();
+    if (!find_name(var_name)) {
+        is_parse_ok = 0;
+    }
     match(id);
     match(assign);
     expr();
-    out("assign_stat");
 }
 
 static void stat(){
-    in("stat");
     assign_stat();
-    out("stat");
 }
 
 static void stat_list(){
-    in("stat_list");
     stat();
     while(lookahead == ';'){
         match(';');
         stat();
     }
-
-
-    out("stat_list");
 }
 
 static void stat_part(){
-    in("stat_part");
     match(begin);
     stat_list();
     match(end);
     match('.');
-    out("stat_part");
+
 }
 
 
 static void prog(){
-    in("prog");
+
     program_header();
     var_part();
     stat_part();
-    out("prog");
+
 }
 /**********************************************************************/
 /*  PUBLIC METHODS for this OBJECT  (EXPORTED)                        */
@@ -254,11 +235,17 @@ static void prog(){
 
 int parser()
 {
-    //p_toktab();                    //display the token and keyword tables
+    //p_toktab();                    //token and keyword tables
+    p_symtab();                      //symbol table before parse
     in("parser");
-    lookahead = get_token();       // get the first token
-    prog();                         // call the first grammar rule
+    lookahead = get_token();        //get the first token
+    prog(); //main program
+    
     out("parser");
+
+    printf("\n\n");
+    p_symtab();                     //symbol table after parse
+    printf("\n");                  
     return is_parse_ok;             // status indicator
 }
 
