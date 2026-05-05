@@ -36,17 +36,22 @@ static int  plex  = 0;               /* current index lexeme  buffer  */
 
 static void get_prog()
 {
-    printf("\n *** TO BE DONE");
-    printf("IN GET_PROG");
+    int c;
+    int i = 0;
+    
+    while ((c = getchar()) != EOF && i < BUFSIZE - 1) {
+        buffer[i++] = c;
+    }
+    buffer[i] = '\0';
 }
 
 /**********************************************************************/
 /* Display the buffer                                                 */
-/**********************************************************************/
+/*******************************************ww***************************/
 
 static void pbuffer()
 {
-    printf("\n *** TO BE DONE");
+    printf("\n *** PROGRAM BUFFER ***\n%s\n", buffer);
 }
 
 /**********************************************************************/
@@ -55,7 +60,9 @@ static void pbuffer()
 
 static void get_char()
 {
-    printf("\n *** TO BE DONE");
+    if (pbuf < strlen(buffer) && plex < LEXSIZE - 1) {
+        lexbuf[plex++] = buffer[pbuf++];
+    }
 }
 
 /**********************************************************************/
@@ -70,7 +77,98 @@ static void get_char()
 /**********************************************************************/
 int get_token()
 {
-    printf("\n *** TO BE DONE"); return 0;
+    /*
+    pbuf trakcs current position in pgrm buffer
+    lexbuf contains current lexem that is being built.  (reset it)
+    plex trakcs current position in lexem buffer
+
+    Increment plex as lexem is build with each get_char
+    */
+    /*
+    Functionallity:
+    First read of input file. boolean since get_token gets called multiple times
+    Check if end of input -> return '$' for end of file
+    Skip whitespaces
+
+    reset lexem buffer perhaps
+    check for character operators := (Check the lexbuf[i] and lexbuf[i++])
+    after operator check, skip 2 
+    
+    Check for single character operators ()+-*,;./:=
+    check for numbers 
+    check for keywords
+    
+    
+    */
+
+    int a; 
+    static int first_run = 1;
+    if(first_run){
+        get_prog();
+        first_run = 0;
+    }
+    
+    //skips white space
+    while(buffer[pbuf] != '\0' && isspace(buffer[pbuf])){
+        pbuf++;
+    }
+
+    //check for end of input buffer
+    if(buffer[pbuf] == '\0'){
+        return '$';
+    }
+
+    plex = 0;
+    
+    a = buffer[pbuf];
+    size_t blen = strlen(buffer);
+    //check for :=
+    if(a == ':' && pbuf +1 < blen && buffer[pbuf+1] == '='){
+        lexbuf[0] = ':';
+        lexbuf[1] = '=';
+        lexbuf[2] = '\0';
+        pbuf += 2;
+        plex = 2;
+        return lex2tok(":=");
+    }
+
+    //check for single-character operators and add to lexem
+    if(strchr("()+-*,;./:=", a)){
+        lexbuf[0] = a;
+        lexbuf[1] = '\0';
+        pbuf++;
+        return lex2tok(lexbuf);
+    }
+
+    //check for number
+    if(isdigit(a)){
+        //check if the character is a number and if the lexem is not full
+        while(buffer[pbuf] != '\0' && isdigit(buffer[pbuf]) && plex < LEXSIZE - 1){
+            get_char();
+        }
+        lexbuf[plex] = '\0';
+        return lex2tok("number");
+    }
+
+    //check for identifiers and keywords
+    if(isalpha(a)){
+        //check if its alphanumeric number & if lexem not full
+        while(buffer[pbuf] != '\0' && isalnum(buffer[pbuf]) && plex < LEXSIZE - 1){
+            get_char();
+        }
+        lexbuf[plex] = '\0';
+
+        //if is valid otherwise default to id
+        toktyp token = key2tok(lexbuf);
+        if(token != nfound){
+            return token;
+        }
+        return lex2tok("id");
+    }
+
+    //unknown character
+    pbuf++;
+    return get_token();
 }
 
 /**********************************************************************/
@@ -78,7 +176,7 @@ int get_token()
 /**********************************************************************/
 char * get_lexeme()
 {
-    printf("\n *** TO BE DONE"); return "$";
+    return lexbuf;
 }
 
 /**********************************************************************/

@@ -81,7 +81,6 @@ static tab keywordtab[ ] = {
 void p_toktab()
 {
     printf("\nP_TOKTAB");
-    printf("\n *** TO BE DONE");
     line_head("THE PROGRAM KEYWORDS");
     for(int i = 0; keywordtab[i].token != nfound; i++){
         printf("\n%10s %3d", keywordtab[i].text, keywordtab[i].token);
