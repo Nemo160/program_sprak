@@ -34,6 +34,7 @@ static int startp =0;                  /* start position program in ST*/
 /**********************************************************************/
 /*  PRIVATE METHODS for this OBJECT  (using "static" in C)            */
 /**********************************************************************/
+static void line();
 static void line(){
     printf("\n______________________________________________________________");
 }
@@ -45,7 +46,7 @@ static int get_type_size(toktyp ftype){
     if(ftype == real){ return 8; }
     return 0;
 }
-static int pgrm_size = 0;
+static int prog_size = 0;
 /**********************************************************************/
 /*  GET methods (one for each attribute)                              */
 /**********************************************************************/
@@ -126,12 +127,7 @@ static void p_symrow(int ftref)
 
 void p_symtab()
 {
-    static int init = 0;    
-    if(!init){
-       // initst();
-        startp = numrows;
-        init = 1;
-    }
+
     
     line();
     printf("\nTHE SYMBOL TABLE");
@@ -144,7 +140,7 @@ void p_symtab()
         p_symrow(i);
     }
     line();
-    printf("\nSTATIC STORAGE REQUIRED IS %d BYTES", pgrm_size);
+    printf("\nSTATIC STORAGE REQUIRED IS %d BYTES", prog_size);
     line();
     printf("\n");
 }
@@ -154,9 +150,8 @@ void p_symtab()
 /**********************************************************************/
 void addp_name(char * fpname)
 {
-    addrow(fpname, program, program, 32, 0);
+    addrow(fpname, program, program, prog_size, 0);
     startp = numrows;
-    pgrm_size = pgrm_size + 32;
 }
 
 /**********************************************************************/
@@ -184,16 +179,19 @@ int find_name(char * fpname)
 /**********************************************************************/
 void setv_type(toktyp ftype)
 {
-    static int addr = 0;
+    static int address = 0;
+    
     for(int i = startp; i < numrows; i++){
         if(get_type(i) == undef){
             set_type(i, ftype);
-            set_size(i,get_type_size(ftype));
-            set_addr(i, addr);
-            addr = get_size(i)+ addr;
+            set_size(i, get_type_size(ftype));
+            set_addr(i, address);
+            address = get_size(i) + address;
+            prog_size = prog_size + get_size(i);
             //set_size(i, (get_type(i)-var));
-        }
+        }   
     }
+    set_size(0, prog_size);
 }
 
 /**********************************************************************/

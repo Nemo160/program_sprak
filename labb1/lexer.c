@@ -30,9 +30,19 @@ static int  plex  = 0;               /* current index lexeme  buffer  */
 /**********************************************************************/
 /* buffer functions                                                   */
 /**********************************************************************/
+
 /**********************************************************************/
 /* Read the input file into the buffer                                */
 /**********************************************************************/
+static void pbuffer()
+{
+    printf("\n______________________________________________________________");
+    printf("\n THE PROGRAM TEXT");
+    printf("\n______________________________________________________________");
+    printf("\n%s\n", buffer);
+    printf("\n______________________________________________________________");
+
+}
 
 static void get_prog()
 {
@@ -43,16 +53,14 @@ static void get_prog()
         buffer[i++] = c;
     }
     buffer[i] = '\0';
+    pbuffer(); 
 }
 
 /**********************************************************************/
 /* Display the buffer                                                 */
 /**********************************************************************/
 
-static void pbuffer()
-{
-    printf("\n THE PROGRAM TEXT***\n%s\n", buffer);
-}
+
 
 /**********************************************************************/
 /* Copy a character from the program buffer to the lexeme buffer      */
@@ -60,7 +68,7 @@ static void pbuffer()
 
 static void get_char()
 {
-    if (pbuf < strlen(buffer) && plex < LEXSIZE - 1) {
+    if (pbuf < strlen(buffer) && plex < LEXSIZE -1) {
         lexbuf[plex++] = buffer[pbuf++];
     }
 }
@@ -106,7 +114,9 @@ int get_token()
     if(first_run){
         get_prog();
         first_run = 0;
+        
     }
+  
     
     //skips white space
     while(buffer[pbuf] != '\0' && isspace(buffer[pbuf])){

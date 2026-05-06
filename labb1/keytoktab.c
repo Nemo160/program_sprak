@@ -146,7 +146,7 @@ char * tok2lex(toktyp ftok)
             return keywordtab[i].text;
         }
     }
-    return "WORD ERR";
+    return "error";
 }
 
 /**********************************************************************/
