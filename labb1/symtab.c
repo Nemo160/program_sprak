@@ -1,3 +1,5 @@
+//Edinson Uribe
+
 /**********************************************************************/
 /* lab 1 DVG C01 - Symbol Table OBJECT                                */
 /**********************************************************************/
@@ -128,7 +130,6 @@ static void p_symrow(int ftref)
 void p_symtab()
 {
 
-    
     line();
     printf("\nTHE SYMBOL TABLE");
     line();
@@ -150,6 +151,7 @@ void p_symtab()
 /**********************************************************************/
 void addp_name(char * fpname)
 {
+    //initst();
     addrow(fpname, program, program, prog_size, 0);
     startp = numrows;
 }

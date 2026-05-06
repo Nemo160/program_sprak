@@ -1,0 +1,161 @@
+
+______________________________________________________________
+ THE PROGRAM TEXT
+______________________________________________________________
+program sem1(input, output);
+var A, B, C: integer;
+
+begin
+A := D + C * 2  
+end.
+
+
+______________________________________________________________
+SEMANTIC: ID NOT declared: D
+SEMANTIC: Assign types: integer := undef
+______________________________________________________________
+THE SYMBOL TABLE
+______________________________________________________________
+      NAME       ROLE            TYPE       SIZE       ADDR
+______________________________________________________________
+      sem1    program         program         12          0
+         A        var         integer          4          0
+         B        var         integer          4          4
+         C        var         integer          4          8
+______________________________________________________________
+STATIC STORAGE REQUIRED IS 12 BYTES
+______________________________________________________________
+
+ 
+ Parse Failed! 
+
+______________________________________________________________
+ THE PROGRAM TEXT
+______________________________________________________________
+program sem2(input, output);
+var A, B, A: integer;
+
+begin
+A := B + C * 2
+end.
+
+
+______________________________________________________________
+SEMANTIC: ID already declared: A
+SEMANTIC: ID NOT declared: C
+SEMANTIC: Assign types: integer := undef
+______________________________________________________________
+THE SYMBOL TABLE
+______________________________________________________________
+      NAME       ROLE            TYPE       SIZE       ADDR
+______________________________________________________________
+      sem2    program         program         12          0
+         A        var         integer          4          0
+         B        var         integer          4          4
+         A        var         integer          4          8
+______________________________________________________________
+STATIC STORAGE REQUIRED IS 12 BYTES
+______________________________________________________________
+
+ 
+ Parse Failed! 
+
+______________________________________________________________
+ THE PROGRAM TEXT
+______________________________________________________________
+program sem3(input, output);
+var A, B, C: double;
+
+begin
+A := B + C * 2
+end.
+
+
+______________________________________________________________
+SYNTAX: Type name expected found double
+SYNTAX: Symbol expected ; found double
+SYNTAX: Symbol expected : found ;
+SYNTAX: Type name expected found ;
+SEMANTIC: Assign types: error := undef
+______________________________________________________________
+THE SYMBOL TABLE
+______________________________________________________________
+      NAME       ROLE            TYPE       SIZE       ADDR
+______________________________________________________________
+      sem3    program         program          0          0
+         A        var           error          0          0
+         B        var           error          0          0
+         C        var           error          0          0
+    double        var           error          0          0
+______________________________________________________________
+STATIC STORAGE REQUIRED IS 0 BYTES
+______________________________________________________________
+
+ 
+ Parse Failed! 
+
+______________________________________________________________
+ THE PROGRAM TEXT
+______________________________________________________________
+program sem4(input, output);
+var A, B, C: integer;
+    D, E, F: real;
+
+begin
+F := B + C * 2
+end.
+
+
+______________________________________________________________
+SEMANTIC: Assign types: real := integer
+______________________________________________________________
+THE SYMBOL TABLE
+______________________________________________________________
+      NAME       ROLE            TYPE       SIZE       ADDR
+______________________________________________________________
+      sem4    program         program         36          0
+         A        var         integer          4          0
+         B        var         integer          4          4
+         C        var         integer          4          8
+         D        var            real          8         12
+         E        var            real          8         20
+         F        var            real          8         28
+______________________________________________________________
+STATIC STORAGE REQUIRED IS 36 BYTES
+______________________________________________________________
+
+ 
+ Parse Failed! 
+
+______________________________________________________________
+ THE PROGRAM TEXT
+______________________________________________________________
+program sem5(input, output);
+var A, B, C: integer;
+    D, E, F: real;
+
+begin
+A := D + E * 2
+end.
+
+
+______________________________________________________________
+SEMANTIC: Assign types: integer := real
+______________________________________________________________
+THE SYMBOL TABLE
+______________________________________________________________
+      NAME       ROLE            TYPE       SIZE       ADDR
+______________________________________________________________
+      sem5    program         program         36          0
+         A        var         integer          4          0
+         B        var         integer          4          4
+         C        var         integer          4          8
+         D        var            real          8         12
+         E        var            real          8         20
+         F        var            real          8         28
+______________________________________________________________
+STATIC STORAGE REQUIRED IS 36 BYTES
+______________________________________________________________
+
+ 
+ Parse Failed! 

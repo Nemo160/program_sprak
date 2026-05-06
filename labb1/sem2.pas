@@ -1,6 +1,6 @@
-program sem5(input, output);
-var A, B, C: integer;
-D, E, F: real;
+program test(input, output);
+var A: integer;
+    B: real;
 begin
-A := D + E * 2
+A := B + 2
 end.

@@ -1,3 +1,5 @@
+//Edinson Uribe
+
 /**********************************************************************/
 /* lab 1 DVG C01 - Lexer OBJECT                                       */
 /**********************************************************************/
@@ -85,29 +87,6 @@ static void get_char()
 /**********************************************************************/
 int get_token()
 {
-    /*
-    pbuf trakcs current position in pgrm buffer
-    lexbuf contains current lexem that is being built.  (reset it)
-    plex trakcs current position in lexem buffer
-
-    Increment plex as lexem is build with each get_char
-    */
-    /*
-    Functionallity:
-    First read of input file. boolean since get_token gets called multiple times
-    Check if end of input -> return '$' for end of file
-    Skip whitespaces
-
-    reset lexem buffer perhaps
-    check for character operators := (Check the lexbuf[i] and lexbuf[i++])
-    after operator check, skip 2 
-    
-    Check for single character operators ()+-*,;./:=
-    check for numbers 
-    check for keywords
-    
-    
-    */
 
     int a; 
     static int first_run = 1;
@@ -116,14 +95,11 @@ int get_token()
         first_run = 0;
         
     }
-  
-    
-    //skips white space
+
     while(buffer[pbuf] != '\0' && isspace(buffer[pbuf])){
         pbuf++;
     }
 
-    //check for end of input buffer
     if(buffer[pbuf] == '\0'){
         return '$';
     }
@@ -142,7 +118,7 @@ int get_token()
         return lex2tok(":=");
     }
 
-    //check for single-character operators and add to lexem
+    //check for single-character operators and add to lexbuf
     if(strchr("()+-*,;./:=", a)){
         lexbuf[0] = a;
         lexbuf[1] = '\0';
@@ -150,7 +126,6 @@ int get_token()
         return lex2tok(lexbuf);
     }
 
-    //check for number
     if(isdigit(a)){
         //check if the character is a number and if the lexem is not full
         while(buffer[pbuf] != '\0' && isdigit(buffer[pbuf]) && plex < LEXSIZE - 1){
@@ -160,15 +135,14 @@ int get_token()
         return lex2tok("number");
     }
 
-    //check for identifiers and keywords
+    //identifiers and keywords
     if(isalpha(a)){
-        //check if its alphanumeric number & if lexem not full
+
         while(buffer[pbuf] != '\0' && isalnum(buffer[pbuf]) && plex < LEXSIZE - 1){
             get_char();
         }
         lexbuf[plex] = '\0';
 
-        //if is valid otherwise default to id
         toktyp token = key2tok(lexbuf);
         if(token != nfound){
             return token;

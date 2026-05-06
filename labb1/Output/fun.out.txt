@@ -1,0 +1,162 @@
+
+______________________________________________________________
+ THE PROGRAM TEXT
+______________________________________________________________
+program fun1(input, output);
+var A, B, A: integer;  
+
+begin
+A := B + C * 2  
+end.
+
+
+______________________________________________________________
+SEMANTIC: ID already declared: A
+SEMANTIC: ID NOT declared: C
+SEMANTIC: Assign types: integer := undef
+______________________________________________________________
+THE SYMBOL TABLE
+______________________________________________________________
+      NAME       ROLE            TYPE       SIZE       ADDR
+______________________________________________________________
+      fun1    program         program         12          0
+         A        var         integer          4          0
+         B        var         integer          4          4
+         A        var         integer          4          8
+______________________________________________________________
+STATIC STORAGE REQUIRED IS 12 BYTES
+______________________________________________________________
+
+ 
+ Parse Failed! 
+
+______________________________________________________________
+ THE PROGRAM TEXT
+______________________________________________________________
+program fun2(input, output);
+var A, B, C: integer;
+
+begin
+3A := B + C * 2
+end.
+
+
+______________________________________________________________
+SEMANTIC: ID NOT declared: 3
+SYNTAX: Symbol expected id found 3
+SYNTAX: Symbol expected := found 3
+SEMANTIC: Assign types: undef := integer
+SYNTAX: Symbol expected end found A
+SYNTAX: Symbol expected . found A
+______________________________________________________________
+THE SYMBOL TABLE
+______________________________________________________________
+      NAME       ROLE            TYPE       SIZE       ADDR
+______________________________________________________________
+      fun2    program         program         12          0
+         A        var         integer          4          0
+         B        var         integer          4          4
+         C        var         integer          4          8
+______________________________________________________________
+STATIC STORAGE REQUIRED IS 12 BYTES
+______________________________________________________________
+
+ 
+ Parse Failed! 
+
+______________________________________________________________
+ THE PROGRAM TEXT
+______________________________________________________________
+program fun3(input, output);
+var A, B, C: integer;
+
+begin
+A :
+   = B + C * 2
+end.
+
+
+______________________________________________________________
+SYNTAX: Symbol expected := found :
+SEMANTIC: Assign types: integer := undef
+SYNTAX: Symbol expected end found :
+SYNTAX: Symbol expected . found :
+______________________________________________________________
+THE SYMBOL TABLE
+______________________________________________________________
+      NAME       ROLE            TYPE       SIZE       ADDR
+______________________________________________________________
+      fun3    program         program         12          0
+         A        var         integer          4          0
+         B        var         integer          4          4
+         C        var         integer          4          8
+______________________________________________________________
+STATIC STORAGE REQUIRED IS 12 BYTES
+______________________________________________________________
+
+ 
+ Parse Failed! 
+
+______________________________________________________________
+ THE PROGRAM TEXT
+______________________________________________________________
+program fun4(input, output);
+var A, B, C: integer;
+    D, E, F: integer;
+
+begin
+A := B + C * 2
+end.
+
+
+______________________________________________________________
+______________________________________________________________
+THE SYMBOL TABLE
+______________________________________________________________
+      NAME       ROLE            TYPE       SIZE       ADDR
+______________________________________________________________
+      fun4    program         program         24          0
+         A        var         integer          4          0
+         B        var         integer          4          4
+         C        var         integer          4          8
+         D        var         integer          4         12
+         E        var         integer          4         16
+         F        var         integer          4         20
+______________________________________________________________
+STATIC STORAGE REQUIRED IS 24 BYTES
+______________________________________________________________
+
+ 
+ Parse Successful! 
+
+______________________________________________________________
+ THE PROGRAM TEXT
+______________________________________________________________
+program fun5(input, output);
+var A, B, C: integer;
+
+begin
+A := B + C * 2
+end.
+
+OOOOPS!!!
+
+
+
+
+______________________________________________________________
+______________________________________________________________
+THE SYMBOL TABLE
+______________________________________________________________
+      NAME       ROLE            TYPE       SIZE       ADDR
+______________________________________________________________
+      fun5    program         program         12          0
+         A        var         integer          4          0
+         B        var         integer          4          4
+         C        var         integer          4          8
+______________________________________________________________
+STATIC STORAGE REQUIRED IS 12 BYTES
+______________________________________________________________
+
+ 
+ Parse Successful! 

@@ -1,3 +1,5 @@
+//Edinson Uribe
+
 /**********************************************************************/
 /* lab 1 DVG C01 - Parser OBJECT                                      */
 /**********************************************************************/
@@ -15,7 +17,7 @@
 #include "keytoktab.h" 
 #include "lexer.h"
 #include "symtab.h"
-/* #include "optab.h"       */       /* when the optab     is added   */
+#include "optab.h"
 
 /**********************************************************************/
 /* OBJECT ATTRIBUTES FOR THIS OBJECT (C MODULE)                       */
@@ -180,7 +182,6 @@ static void var_part(){
 // STAT PART ########################################
 
 //returns type of operand
-//identifier looks up in symbol table
 
 static toktyp operand(){
     toktyp t = undef;
