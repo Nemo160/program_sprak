@@ -15,7 +15,7 @@ public class Parser {
         this.optab = operatorTable;
     }
 
-    public boolean Parse() {
+    public boolean parse() {
         lookahead = lexer.nextToken();
         program();
         symtab.print();
@@ -29,7 +29,7 @@ public class Parser {
         }
         else{
             isOk = false;
-            if(ParserMain.DEBUG) System.out.println("SYNTAX: Symbol expected " + expected.lexeme + " found " + lookahead.lexeme());
+            System.out.println("SYNTAX: Symbol expected " + expected.lexeme + " found " + lookahead.lexeme());
         }
     }
 
@@ -42,7 +42,7 @@ public class Parser {
 
     private void programHeader(){
         match(TokenType.PROGRAM);
-        symtab.addProgramName(lookahead.lexeme());
+        symtab.declareProgram(lookahead.lexeme());
         match(TokenType.ID);
         match(TokenType.LPAREN);
         match(TokenType.INPUT);

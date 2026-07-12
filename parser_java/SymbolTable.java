@@ -1,36 +1,72 @@
+import java.util.*;
+
 public class SymbolTable {
-    private final int TABSIZE = 1024;
-    private final int NAMELEN = 20;
-    private int size;
-    private int addr;
+    private final int NAME_LENGTH = 20;
+    private final Map<String, Symbol> table = new LinkedHashMap<>();
+    //variables not yet recieved type
+    private final List<Symbol> waitingVars = new ArrayList<>();
+    private int nextAddr = 0;
+    private int progSize = 0;
 
-    private int prog_size = 0;
-    private int startp = 0;
-    private int numrows = 0;
-    public SymbolTable() {
 
+
+    public void declareProgram(String name){
+        table.put(name, new Symbol(name, Role.PROGRAM));
     }
-    public void addProgramName(String lexeme){
 
+    public void declareVariable(String name){
+        Symbol symbol = new Symbol(name, Role.VARIABLE);
+        table.put(name, symbol);
+        waitingVars.add(symbol);
+    }
+
+    public boolean isDeclared(String name){
+        return table.containsKey(name);
+    }
+    public Type typeOf(String name){
+        Symbol s = table.get(name);
+        if(s == null){
+            return Type.UNDEFINED;
+        }
+        else{
+            return s.getType();
+        }
+    }
+
+    public void setWaitingType(Type type){
+        for(Symbol s : waitingVars){
+            s.setType(type);
+            s.setSize(type.size);
+            s.setAddr(nextAddr);
+            nextAddr += type.size;
+            progSize += type.size;
+        }
+        waitingVars.clear();
     }
 
     public void print(){
         System.out.println("______________________________________________________________");
         System.out.printf("%10s %10s %15s %10s %10s" , "NAME", "ROLE", "TYPE", "SIZE", "ADDR\n");
         System.out.println("______________________________________________________________");
-        for(int i = 0; i< numrows; i++){
-            p_symrow(i);
+
+        for(Symbol s : table.values()){
+            printSymbol(s);
+            //System.out.println("hey");
         }
+
         System.out.println("______________________________________________________________");
-        System.out.printf("\nSTATIC STORAGE REQUIRED IS %d BYTES", prog_size);
+        System.out.printf("\nSTATIC STORAGE REQUIRED IS %d BYTES", progSize);
 
     }
 
-    private void p_symrow(int i){
+    private void printSymbol(Symbol symbol){
+        System.out.printf("%10s  %10s %15s %10d %10d%n",
+                symbol.getName(),
+                symbol.getRole(),
+                symbol.getType(),
+                symbol.getSize(),
+                symbol.getAddr());
 
     }
 
-    private void addpName(char fpname){
-        startp = numrows;
-    }
 }
