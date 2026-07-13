@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 public class ParserMain {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     public static void main(String[] args) throws Exception {
         //read from stdin
         //pass reader to lexer
@@ -15,6 +15,10 @@ public class ParserMain {
         OperatorTable operatorTable = new OperatorTable();
         if(DEBUG) {lexer.printIntput();}
         Parser parser = new Parser(lexer, symbolTable, operatorTable);
-        parser.parse();
+        boolean ok = parser.parse();
+        if(ok){System.out.println(("Parse Successful!"));}
+        else{
+            System.out.println("Parse Failed!");
+        }
     }
 }
