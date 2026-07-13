@@ -6,7 +6,7 @@ import java.util.Map;
 public class Lexer {
     private static final Map<Character, TokenType> SYMBOLS = new HashMap<>();
     private static final Map<String, TokenType> KEYWORDS = new HashMap<>();
-    //map once.
+    //map symbols and keywords once.
     static {
         for(TokenType i : TokenType.values()) {
             if(i.isKeyword){
@@ -38,9 +38,11 @@ public class Lexer {
         //check for space, single character operators
         //alphabets
         //skip whitespace
+
         while(pos < BUFFER.length() && Character.isWhitespace(BUFFER.charAt(pos))){
             pos++;
         }
+
         if(pos >= BUFFER.length()){
             return new Token(TokenType.EOF, "$");
         }
@@ -81,13 +83,17 @@ public class Lexer {
             return new Token(type, varName);
         }
 
-        //continue
+        //unrecognized character
+        String unknown = String.valueOf(a);
         pos++;
-        return nextToken();
+        return new Token(TokenType.UNKNOWN, unknown);
     }
 
-    //DEBUG
-    public void printIntput() throws IOException {
-        System.out.println(this.BUFFER);
+    public void printInput() {
+        System.out.println("______________________________________________________________");
+        System.out.println(" THE PROGRAM TEXT");
+        System.out.println("______________________________________________________________");
+        System.out.println(BUFFER);
+        System.out.println("______________________________________________________________");
     }
 }

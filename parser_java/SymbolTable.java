@@ -1,30 +1,37 @@
 import java.util.*;
 
 public class SymbolTable {
-    private final int NAME_LENGTH = 20;
-    private final Map<String, Symbol> table = new LinkedHashMap<>();
-    //variables not yet received type
+    private final List<Symbol> rows = new ArrayList<>();
+    //linked hashmap to preserve access order (declaration order)
+    private final Map<String, Symbol> lookup = new LinkedHashMap<>();
     private final List<Symbol> waitingVars = new ArrayList<>();
+    private Symbol programSymbol;
     private int nextAddr = 0;
     private int progSize = 0;
 
 
 
     public void declareProgram(String name){
-        table.put(name, new Symbol(name, Role.PROGRAM));
+        Symbol symbol = new Symbol(name, Role.PROGRAM);
+        symbol.setType(Type.PROGRAM);
+        rows.add(symbol);
+        lookup.putIfAbsent(name, symbol);
+        programSymbol = symbol;
     }
 
     public void declareVariable(String name){
         Symbol symbol = new Symbol(name, Role.VARIABLE);
-        table.put(name, symbol);
+        rows.add(symbol);
+        lookup.putIfAbsent(name, symbol);
         waitingVars.add(symbol);
     }
 
     public boolean isDeclared(String name){
-        return table.containsKey(name);
+        return lookup.containsKey(name);
     }
+
     public Type typeOf(String name){
-        Symbol s = table.get(name);
+        Symbol s = lookup.get(name);
         if(s == null){
             return Type.UNDEFINED;
         }
@@ -34,33 +41,38 @@ public class SymbolTable {
     }
 
     public void setWaitingType(Type type){
-        for(Symbol s : waitingVars){
-            s.setType(type);
-            s.setSize(type.size);
-            s.setAddr(nextAddr);
+        for(Symbol i : waitingVars){
+            i.setType(type);
+            i.setSize(type.size);
+            i.setAddr(nextAddr);
             nextAddr += type.size;
             progSize += type.size;
         }
         waitingVars.clear();
+        if(programSymbol != null){
+            programSymbol.setSize(progSize);
+        }
     }
 
     public void print(){
         System.out.println("______________________________________________________________");
+        System.out.println("THE SYMBOL TABLE");
+        System.out.println("______________________________________________________________");
         System.out.printf("%10s %10s %15s %10s %10s" , "NAME", "ROLE", "TYPE", "SIZE", "ADDR\n");
         System.out.println("______________________________________________________________");
 
-        for(Symbol s : table.values()){
-            printSymbol(s);
-            //System.out.println("test");
+        for(Symbol i : rows){
+            printSymbol(i);
         }
 
         System.out.println("______________________________________________________________");
-        System.out.printf("\nSTATIC STORAGE REQUIRED IS %d BYTES\n", progSize);
+        System.out.println("STATIC STORAGE REQUIRED IS " + progSize +  " BYTES");
+        System.out.println("______________________________________________________________");
 
     }
 
     private void printSymbol(Symbol symbol){
-        System.out.printf("%10s  %10s %15s %10d %10d%n",
+        System.out.printf("%10s %10s %15s %10d %10d\n",
                 symbol.getName(),
                 symbol.getRole(),
                 symbol.getType(),

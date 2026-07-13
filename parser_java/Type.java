@@ -1,5 +1,17 @@
 public enum Type {
-    INTEGER(4), REAL(8), BOOLEAN(4), UNDEFINED(0), ERROR(0);
+    INTEGER(4, "integer"), REAL(8, "real"), BOOLEAN(4, "boolean"),
+    UNDEFINED(0, "undef"), ERROR(0, "error"), PROGRAM(0, "program");
+
     public final int size;
-    Type(int size) { this.size = size; }
+    private final String label;
+
+    Type(int size, String label) {
+        this.size = size;
+        this.label = label;
+    }
+
+    @Override
+    public String toString() {
+        return label;
+    }
 }

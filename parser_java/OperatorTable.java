@@ -18,8 +18,6 @@ public class OperatorTable {
         TABLE.put(new OpKey(TokenType.TIMES, Type.REAL, Type.INTEGER), Type.REAL);
     }
 
-    public OperatorTable() {}
-
     public Type resultType(TokenType op, Type left, Type right) {
         return TABLE.getOrDefault(new OpKey(op, left, right), Type.UNDEFINED);
     }

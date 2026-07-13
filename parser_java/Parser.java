@@ -24,7 +24,29 @@ public class Parser {
 
     public boolean parse() {
         lookahead = lexer.nextToken();
-        program();
+        if(lookahead.type() == TokenType.EOF){
+            System.out.println("WARNING: Input file is empty");
+            isOk = false;
+        }
+        else{
+            program();
+
+            //grammar can finish before the file does.
+            //check for leftover tokens and print corresponding error message
+            if(lookahead.type() != TokenType.EOF){
+                isOk = false;
+                System.out.println("SYNTAX: Extra symbols after end of parse!");
+                StringBuilder leftover = new StringBuilder();
+                while(lookahead.type() != TokenType.EOF){
+                    if(!leftover.isEmpty()){
+                        leftover.append(' ');
+                    }
+                    leftover.append(lookahead.lexeme());
+                    lookahead = lexer.nextToken();
+                }
+                System.out.println(leftover);
+            }
+        }
         symtab.print();
         return isOk;
     }
@@ -50,7 +72,15 @@ public class Parser {
     private void programHeader(){
         in("Program Header");
         match(TokenType.PROGRAM);
-        symtab.declareProgram(lookahead.lexeme());
+        String progName;
+        //if program name is left empty
+        if(lookahead.type() == TokenType.ID){
+            progName = lookahead.lexeme();
+        }
+        else{
+            progName = "???";
+        }
+        symtab.declareProgram(progName);
         match(TokenType.ID);
         match(TokenType.LPAREN);
         match(TokenType.INPUT);
@@ -62,7 +92,7 @@ public class Parser {
     }
     private void varPart(){
         in("vart part");
-        if(lookahead.type() == TokenType.VAR){
+        if(lookahead.type() == TokenType.VAR || lookahead.type() == TokenType.ID){
             match(TokenType.VAR);
             varDecList();
         }
@@ -100,12 +130,17 @@ public class Parser {
     }
 
     private void declareId(){
+        if(lookahead.type() != TokenType.ID){
+            return;
+        }
         String name = lookahead.lexeme();
         if(symtab.isDeclared(name)){
             isOk = false;
             System.out.println("SEMANTIC: ID already declared: " + name);
         }
-        symtab.declareVariable(name);
+        else{
+            symtab.declareVariable(name);
+        }
     }
 
     private Type type(){
@@ -160,22 +195,24 @@ public class Parser {
 
     private void assignStat(){
         in("assign stat");
-        String varName = lookahead.lexeme();
-        Type typeL = Type.UNDEFINED;
+        Type typeL = Type.ERROR;
 
         //get the type of the declared variable
-        if(!symtab.isDeclared(varName)){
-            isOk = false;
-            System.out.println("SEMANTIC: ID NOT declared: " + varName);
-        }
-        else{
-            typeL = symtab.typeOf(varName);
+        if(lookahead.type() == TokenType.ID){
+            String varName = lookahead.lexeme();
+            if(!symtab.isDeclared(varName)){
+                isOk = false;
+                System.out.println("SEMANTIC: ID NOT declared: " + varName);
+            }
+            else{
+                typeL = symtab.typeOf(varName);
+            }
         }
 
         match(TokenType.ID);
         match(TokenType.ASSIGN);
+        //testv.pas
         Type typeR = expr();
-
         if(typeL != typeR){
             isOk = false;
             System.out.println("SEMANTIC: Assign types: " + typeL + " := " + typeR);
@@ -244,14 +281,19 @@ public class Parser {
                 isOk = false;
                 System.out.println("SEMANTIC: ID NOT declared: " + name);
             }
-            else{
-                t = symtab.typeOf(name);
-            }
-            match(TokenType.ID);
+                else{
+                    t = symtab.typeOf(name);
+                }
+                match(TokenType.ID);
         }
         else if(lookahead.type() == TokenType.NUMBER){
             t = Type.INTEGER;
             match(TokenType.NUMBER);
+        }
+        else{
+            isOk = false;
+            System.out.println("SYNTAX: Operand expected");
+            t = Type.ERROR;
         }
         out("operand");
         return t;

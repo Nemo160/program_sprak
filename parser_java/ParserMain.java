@@ -13,7 +13,7 @@ public class ParserMain {
         Lexer lexer = new Lexer(reader);
         SymbolTable symbolTable = new SymbolTable();
         OperatorTable operatorTable = new OperatorTable();
-        if(DEBUG) {lexer.printIntput();}
+        lexer.printInput();
         Parser parser = new Parser(lexer, symbolTable, operatorTable);
         boolean ok = parser.parse();
         if(ok){System.out.println(("Parse Successful!"));}

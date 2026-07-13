@@ -1,3 +1,3 @@
-//using record for immutable data(tokens)
+//using record for immutable data(tokens) and to skip boilerplate code...
 public record Token(TokenType type, String lexeme) {
 }
