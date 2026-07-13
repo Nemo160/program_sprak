@@ -26,7 +26,7 @@ public final class Symbol {
         return addr;
     }
 
-    //setters (package-private: only SymbolTable may mutate a Symbol)
+    //setters
     void setType(final Type type) {
         this.type = type;
     }

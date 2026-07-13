@@ -3,7 +3,7 @@ import java.util.*;
 public class SymbolTable {
     private final int NAME_LENGTH = 20;
     private final Map<String, Symbol> table = new LinkedHashMap<>();
-    //variables not yet recieved type
+    //variables not yet received type
     private final List<Symbol> waitingVars = new ArrayList<>();
     private int nextAddr = 0;
     private int progSize = 0;
@@ -51,11 +51,11 @@ public class SymbolTable {
 
         for(Symbol s : table.values()){
             printSymbol(s);
-            //System.out.println("hey");
+            //System.out.println("test");
         }
 
         System.out.println("______________________________________________________________");
-        System.out.printf("\nSTATIC STORAGE REQUIRED IS %d BYTES", progSize);
+        System.out.printf("\nSTATIC STORAGE REQUIRED IS %d BYTES\n", progSize);
 
     }
 
